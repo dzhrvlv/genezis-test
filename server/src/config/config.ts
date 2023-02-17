@@ -1,0 +1,1 @@
+export const URL = "https://d6757be6f1100.amocrm.ru/api/v4"
