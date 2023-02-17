@@ -8,8 +8,8 @@ export class EntitiesController {
     }
 
     @Post('/create')
-    createEntity(@Headers() headers: any, @Body() data: any) {
-        return this.entitiesService.createEntity(data, headers)
+    createEntity(@Body() data: any) {
+        return this.entitiesService.createEntity(data)
     }
 
 }

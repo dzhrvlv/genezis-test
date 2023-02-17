@@ -1,39 +1,43 @@
 import {Injectable} from '@nestjs/common';
-import {URL} from "../config/config";
 import axios from "axios";
 
 
 @Injectable()
 export class EntitiesService {
-
-
-    async createEntity(data: any, headers: any) {
+    async createEntity(data: any) {
         try {
             const {type} = data
-            const url = `${URL}/${type}`
-            const name = "example " + type
-            const reqData = []
-            reqData.push({
-                name: name
-            })
-            const req = await axios.post(url, [{
-                name: name
-            }], {
+            const oauth = await axios.get("https://test.gnzs.ru/oauth/get-token.php", {
                 headers: {
-                    'content-type': headers['content-type'],
-                    'authorization': headers['authorization']
+                    "X-Client-Id": 30878566
                 }
             })
-            switch (type) {
-                case "leads":
-                    return req.data._embedded.leads[0].id
+            const {access_token, base_domain} = oauth.data
+            if (access_token && base_domain) {
+                const url = `https://${base_domain}/api/v4/${type}`
+                const headers = {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${access_token}`
+                }
+                const name = "example " + type
 
-                case "contacts":
-                    return req.data._embedded.contacts[0].id
+                const req = await axios.post(url, [{
+                    name: name
+                }], {
+                    headers
+                })
+                switch (type) {
+                    case "leads":
+                        return req.data._embedded.leads[0].id
 
-                case "companies":
-                    return req.data._embedded.companies[0].id
+                    case "contacts":
+                        return req.data._embedded.contacts[0].id
+
+                    case "companies":
+                        return req.data._embedded.companies[0].id
+                }
             }
+            return {message: "Ошибка"}
         } catch (e) {
             console.log(e)
             return {message: "Ошибка"}

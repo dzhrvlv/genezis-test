@@ -1,6 +1,6 @@
 import {defineStore} from "pinia";
 import {ref} from "vue";
-import {HeaderConfig, URL} from "../config/config";
+import {URL} from "../config/config";
 import axios from "axios"
 
 interface ActiveEntityType {
@@ -41,7 +41,7 @@ export const useEntityStore = defineStore('entityStore', () => {
 
     const createEntity = async () => {
         loader.value = true
-        const {data} = await axios.post(`${URL}/create`, {type: activeEntity.value.type}, HeaderConfig)
+        const {data} = await axios.post(`${URL}/create`, {type: activeEntity.value.type})
         setTimeout(() => { // таймаут для демонстрации работы лоадера
             if (!data.message) createdEntities.value.push({id: data, name: activeEntity.value.name})
             loader.value = false;
